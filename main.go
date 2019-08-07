@@ -13,15 +13,24 @@ import (
 	"syscall"
 )
 
-const (
-	version = "v1.0.0"
-)
-
 func main() {
 	log.Println("Starting helloworld application...")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello universe!\n")
+		fmt.Fprintf(w, "Hello universe!\n\n")
+
+		fmt.Fprintf(w, "Info!\n")
+		fmt.Fprintf(w, "Version: %s\n\n", os.Getenv("VERSION"))
+
+		fmt.Fprintf(w, "Request!\n")
+		fmt.Fprintf(w, "RemoteAddr: %s\n", r.RemoteAddr)
+		fmt.Fprintf(w, "Method: %s\n", r.Method)
+		fmt.Fprintf(w, "URL: %s\n\n", r.URL)
+
+		fmt.Fprintf(w, "ENV!\n")
+		for _, pair := range os.Environ() {
+			fmt.Fprintf(w, "%s\n", pair)
+		}
 	})
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +38,7 @@ func main() {
 	})
 
 	http.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, version)
+		fmt.Fprintf(w, os.Getenv("VERSION"))
 	})
 
 	s := http.Server{Addr: ":80"}
